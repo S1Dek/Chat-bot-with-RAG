@@ -10,4 +10,3 @@ Na początku trzeba zainstalować node_modules, odpowiednio w backend oraz po st
 ---
 - cd frontend npm install
     - npm start
-===
