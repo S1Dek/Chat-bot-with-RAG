@@ -4,87 +4,74 @@ const { verifyToken } = require("../middleware/auth");
 
 const router = express.Router();
 
+// Łączenie z modelem
+async function queryModel(prompt) {
+    const modelUrl =
+        process.env.MODEL_API_URL || "http://localhost:11434/api/generate";
+
+    const res = await fetch(modelUrl, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+            model: "serwisitchat",
+            prompt,
+            stream: false,
+        }),
+    });
+
+    if (!res.ok) {
+        const txt = await res.text();
+        throw new Error("Model error: " + txt);
+    }
+
+    const data = await res.json();
+    return data.response;
+}
+
+// WIADOMOŚCI GOŚCIA
+router.post("/guest", async(req, res) => {
+    const { content } = req.body;
+
+    if (!content) return res.status(400).json({ error: "Brak treści" });
+
+    try {
+        const response = await queryModel(content);
+
+        return res.json({
+            id: "guest-" + Date.now(),
+            sender: "assistant",
+            content: response,
+        });
+    } catch (err) {
+        console.error("Guest model error:", err);
+        return res.status(500).json({ error: "Model request failed" });
+    }
+});
+
+// WIADOMOŚCI ZALOGOWANEGO UŻYTKOWNIKA
+
 router.post("/send", verifyToken, async(req, res) => {
     const { conversationId, content } = req.body;
 
-    if (!content) return res.status(400).json({ error: "No content" });
-
-    // sprawdzenie usera
-    const user = await prisma.user.findUnique({ where: { id: req.userId } });
-
-    if (user.role === "demo") {
-        return res.json({
-            sender: "assistant",
-            content: "Tryb DEMO — wiadomość nie została wysłana do modelu.",
-        });
-    }
-
-    // zapis wiadomości użytkownika
-    await prisma.message.create({
-        data: { conversationId, sender: "user", content },
-    });
-
-    // ------------- OLLAMA STREAM -------------
-    const modelUrl = "http://localhost:11434/api/generate";
+    if (!conversationId || !content)
+        return res.status(400).json({ error: "Brak danych" });
 
     try {
-        const response = await fetch(modelUrl, {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-                model: "serwisitchat",
-                prompt: content,
-            }),
+        await prisma.message.create({
+            data: { conversationId, sender: "user", content },
         });
 
-        if (!response.ok) {
-            throw new Error("Model returned error: " + response.status);
-        }
+        // Odpowiedź modelu
+        const output = await queryModel(content);
 
-        // Odbieranie STREAM-u linia po linii
-        let assistantText = "";
-
-        const reader = response.body.getReader();
-        const decoder = new TextDecoder("utf-8");
-
-        while (true) {
-            const { value, done } = await reader.read();
-            if (done) break;
-
-            const chunk = decoder.decode(value);
-
-            // odpowiedź ollamy może zawierać wiele JSON-ów oddzielonych newline
-            const lines = chunk.split("\n").filter((x) => x.trim() !== "");
-
-            for (const line of lines) {
-                try {
-                    const json = JSON.parse(line);
-
-                    if (json.response) {
-                        assistantText += json.response;
-                    }
-                } catch (e) {
-                    console.error("Stream JSON parse fail:", line);
-                }
-            }
-        }
-
-        // zapis odpowiedzi modelu
         const assistantMsg = await prisma.message.create({
-            data: {
-                conversationId,
-                sender: "assistant",
-                content: assistantText,
-            },
+            data: { conversationId, sender: "assistant", content: output },
         });
 
         return res.json(assistantMsg);
     } catch (err) {
-        console.error("Model request failed:", err);
-        return res.status(500).json({
-            error: "Ollama request failed",
-            detail: err.message,
-        });
+        console.error("User model error:", err);
+        return res.status(500).json({ error: "Model request failed" });
     }
 });
 

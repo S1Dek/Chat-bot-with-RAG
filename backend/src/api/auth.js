@@ -2,75 +2,87 @@ const express = require("express");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const prisma = require("../prismaClient");
-const { verifyToken } = require("../middleware/auth");
 const router = express.Router();
 
-const JWT_SECRET = process.env.JWT_SECRET;
+const JWT_SECRET = process.env.JWT_SECRET || "change_this_secret";
 
-router.post("/register", async(req, res) => {
-    const { email, password, name } = req.body;
+router.post("/register", async (req, res) => {
+  const { email, password, name, role } = req.body;
 
-    if (!email || !password)
-        return res.status(400).json({ error: "Brak danych" });
+  if (!email || !password)
+    return res.status(400).json({ error: "Brak danych" });
 
-    const hashed = await bcrypt.hash(password, 10);
+  const hashed = await bcrypt.hash(password, 10);
 
-    try {
-        const user = await prisma.user.create({
-            data: { email, password: hashed, name },
-        });
-
-        const token = jwt.sign({ userId: user.id }, JWT_SECRET, {
-            expiresIn: "365d",
-        });
-
-        res.json({
-            token,
-            user: { id: user.id, email: user.email, name: user.name },
-        });
-    } catch (e) {
-        console.error(e);
-        res.status(400).json({ error: "Użytkownik już istnieje" });
-    }
-});
-
-router.get("/me", verifyToken, async(req, res) => {
-    const user = await prisma.user.findUnique({
-        where: { id: req.userId },
+  try {
+    const user = await prisma.user.create({
+      data: { email, password: hashed, name, role: role || "user" },
     });
-    res.json(user);
-});
 
-router.post("/login", async(req, res) => {
-    const { email, password } = req.body;
-
-    let ok = false;
-    const user = await prisma.user.findUnique({ where: { email } });
-
-    if (!user) return res.status(401).json({ error: "Nieprawidłowe dane" });
-
-    if (user.password === "") {
-        ok = password === user.password;
-    } else {
-        ok = await bcrypt.compare(password, user.password);
-    }
-
-    if (!ok) return res.status(401).json({ error: "Nieprawidłowe dane" });
-
-    const token = jwt.sign({ userId: user.id }, JWT_SECRET, { expiresIn: "1h" });
-
-    await prisma.session.create({
-        data: {
-            userId: user.id,
-            ip: req.ip,
-            userAgent: req.headers["user-agent"],
-        },
+    const token = jwt.sign({ userId: user.id, role: user.role }, JWT_SECRET, {
+      expiresIn: "365d",
     });
 
     res.json({
-        token,
-        user: { id: user.id, email: user.email, name: user.name },
+      token,
+      user: {
+        id: user.id,
+        email: user.email,
+        name: user.name,
+        role: user.role,
+      },
     });
+  } catch (e) {
+    console.error(e);
+    res.status(400).json({ error: "Użytkownik już istnieje" });
+  }
+});
+
+router.post("/login", async (req, res) => {
+  const { email, password } = req.body;
+
+  const user = await prisma.user.findUnique({ where: { email } });
+
+  if (!user) return res.status(401).json({ error: "Nieprawidłowe dane" });
+
+  const ok = await bcrypt.compare(password, user.password);
+  if (!ok) return res.status(401).json({ error: "Nieprawidłowe dane" });
+
+  const token = jwt.sign({ userId: user.id, role: user.role }, JWT_SECRET, {
+    expiresIn: "12h",
+  });
+
+  await prisma.session.create({
+    data: { userId: user.id, ip: req.ip, userAgent: req.headers["user-agent"] },
+  });
+
+  res.json({
+    token,
+    user: {
+      id: user.id,
+      email: user.email,
+      name: user.name,
+      role: user.role,
+    },
+  });
+});
+
+router.get("/me", async (req, res) => {
+  const auth = req.headers.authorization;
+  if (!auth) return res.status(401).json({ error: "No token" });
+
+  try {
+    const token = auth.split(" ")[1];
+    const payload = jwt.verify(token, JWT_SECRET);
+
+    const user = await prisma.user.findUnique({
+      where: { id: payload.userId },
+    });
+
+    res.json(user);
+  } catch {
+    res.status(401).json({ error: "Invalid token" });
+  }
 });
 
 module.exports = router;
