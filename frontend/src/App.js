@@ -1,4 +1,6 @@
 import React, { useEffect, useState } from "react";
+import { Routes, Route, useNavigate } from "react-router-dom";
+import ProfilePage from "./ProfilePage";
 import axios from "axios";
 
 function App() {
@@ -302,6 +304,11 @@ function App() {
 
 		fetchUsers();
 	}
+	const navigate = useNavigate();
+
+    function goToProfile() {
+        navigate("/profile");
+    }
 
   // UI — GOŚĆ
   if (isGuest) {
@@ -636,6 +643,7 @@ function App() {
 		  </div>
 
 		  <button
+			onClick={goToProfile}
 			className="w-full mt-4 bg-blue-600 p-2 rounded hover:bg-blue-700"
 		  >
 			Edytuj profil
@@ -654,4 +662,12 @@ function App() {
   );
 }
 
-export default App;
+export default function AppWrapper() {
+  return (
+    <Routes>
+      <Route path="/" element={<App />} />
+      {/* Profil użytkownika */}
+      <Route path="/profile" element={<ProfilePage />} />
+    </Routes>
+  );
+}

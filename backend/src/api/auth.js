@@ -2,6 +2,7 @@ const express = require("express");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const prisma = require("../prismaClient");
+const { verifyToken } = require("../middleware/auth"); 
 const router = express.Router();
 
 const JWT_SECRET = process.env.JWT_SECRET || "change_this_secret";
@@ -82,6 +83,40 @@ router.get("/me", async (req, res) => {
     res.json(user);
   } catch {
     res.status(401).json({ error: "Invalid token" });
+  }
+});
+
+router.patch("/update", verifyToken, async (req, res) => {
+  try {
+    const { email, name, password } = req.body;
+    const data = {};
+
+    if (email) data.email = email;
+    if (name) data.name = name;
+
+    if (password && password.trim() !== "") {
+      const hashed = await bcrypt.hash(password, 10);
+      data.password = hashed;
+    }
+
+    const updated = await prisma.user.update({
+      where: { id: req.userId },
+      data
+    });
+
+    return res.json({
+      message: "Profil zaktualizowany",
+      user: {
+        id: updated.id,
+        email: updated.email,
+        name: updated.name,
+        role: updated.role
+      }
+    });
+
+  } catch (err) {
+    console.log(err);
+    return res.status(400).json({ error: "Nie udało się zaktualizować danych" });
   }
 });
 
