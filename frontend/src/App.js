@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Routes, Route, useNavigate } from "react-router-dom";
 import ProfilePage from "./ProfilePage";
+import ChangePasswordPage from "./ChangePasswordPage";
 import axios from "axios";
 
 function App() {
@@ -39,7 +40,7 @@ function App() {
   const [newUserName, setNewUserName] = useState("");
   const [newUserRole, setNewUserRole] = useState("user");
   const [rightPanelOpen, setRightPanelOpen] = useState(false);
-
+  const [theme, setTheme] = useState(localStorage.getItem("theme") || "dark")
 
 
   // Ładowanie USERA i CONVERSATIONS
@@ -48,6 +49,18 @@ function App() {
     fetchMe();
     fetchConversations();
   }, [authToken]);
+
+  useEffect(() => {
+  const html = document.documentElement;
+
+  if (theme === "dark") {
+    html.classList.add("dark");
+  } else {
+    html.classList.remove("dark");
+  }
+
+  localStorage.setItem("theme", theme);
+}, [theme]);
 
 	async function fetchMe() {
 		try {
@@ -310,354 +323,318 @@ function App() {
         navigate("/profile");
     }
 
+	function toggleTheme() {
+	setTheme(prev => prev === "dark" ? "light" : "dark");
+	}
+
+	function goToChangePassword() {
+        navigate("/change-password");
+    }
+
   // UI — GOŚĆ
   if (isGuest) {
-    return (
-      <div className="flex h-screen bg-gray-900 text-gray-100">
-        {/* LEWY PANEL */}
-        <div className="w-72 p-4 bg-gray-800 border-r border-gray-700">
-          <button
-            onClick={createConversation}
-            className="w-full bg-green-600 p-2 rounded"
-          >
-            Nowa rozmowa
-          </button>
+	return (
+	<div className="flex h-screen bg-[var(--bg-main)] text-[var(--text)]">
+	{/* LEWY PANEL */}
+	<div className="w-72 p-4 bg-[var(--bg-panel)] border-r border-[var(--border)]">
+		<button
+		onClick={createConversation}
+		className="w-full bg-green-600 p-2 rounded"
+		>
+		Nowa rozmowa
+		</button>
 
-          <div className="mt-6 border-t border-gray-600 pt-4">
-            <h3 className="text-lg">Logowanie</h3>
+		<div className="mt-6 border-t border-[var(--border)] pt-4">
+		<h3 className="text-lg">Logowanie</h3>
 
-            <input
-              type="email"
-              placeholder="Email"
-              value={loginEmail}
-              onChange={(e) => setLoginEmail(e.target.value)}
-              className="w-full p-2 mt-2 bg-gray-900 border border-gray-700 rounded"
-            />
+		<input
+			type="email"
+			placeholder="Email"
+			value={loginEmail}
+			onChange={(e) => setLoginEmail(e.target.value)}
+			className="w-full p-2 mt-2 bg-[var(--bg-input)] border border-[var(--border)] rounded"
+		/>
 
-            <input
-              type="password"
-              placeholder="Hasło"
-              value={loginPassword}
-              onChange={(e) => setLoginPassword(e.target.value)}
-              className="w-full p-2 mt-2 bg-gray-900 border border-gray-700 rounded"
-            />
+		<input
+			type="password"
+			placeholder="Hasło"
+			value={loginPassword}
+			onChange={(e) => setLoginPassword(e.target.value)}
+			className="w-full p-2 mt-2 bg-[var(--bg-input)] border border-[var(--border)] rounded"
+		/>
 
-            <button
-              onClick={login}
-              className="w-full mt-3 bg-blue-600 hover:bg-blue-700 p-2 rounded"
-            >
-              Zaloguj się
-            </button>
-          </div>
-        </div>
+		<button
+			onClick={login}
+			className="w-full mt-3 bg-blue-600 hover:bg-blue-700 p-2 rounded"
+		>
+			Zaloguj się
+		</button>
+		</div>
+	</div>
 
-        {/* GŁÓWNY PANEL CZATU */}
-        <div className="flex-1 p-6">
-          <h2 className="text-xl">Tryb gościa – rozmowy nie są zapisywane</h2>
+	{/* GŁÓWNY PANEL CZATU */}
+	<div className="flex-1 p-6">
+		<h2 className="text-xl">Tryb gościa – rozmowy nie są zapisywane</h2>
 
-          <div
-            className="border border-gray-700 rounded p-4 mt-4 bg-gray-800 overflow-y-auto"
-            style={{ height: "70vh" }}
-          >
-            {activeConv?.messages?.map((m) => (
-              <div key={m.id} className="mb-4">
-                <strong className={m.sender === "user" ? "text-blue-400" : "text-green-400"}>
-                  {m.sender === "user" ? "Ty" : "Asystent"}:
-                </strong>
-                <p>{m.content}</p>
-              </div>
-            ))}
-          </div>
+		<div
+		className="border border-[var(--border)] rounded p-4 mt-4 bg-[var(--bg-panel)] overflow-y-auto"
+		style={{ height: "70vh" }}
+		>
+		{activeConv?.messages?.map((m) => (
+			<div key={m.id} className="mb-4">
+			<strong className={m.sender === "user" ? "text-blue-400" : "text-green-400"}>
+				{m.sender === "user" ? "Ty" : "Asystent"}:
+			</strong>
+			<p>{m.content}</p>
+			</div>
+		))}
+		</div>
 
-          {activeConv && (
-            <>
-              <textarea
-                className="w-full bg-gray-800 border border-gray-700 rounded p-2 mt-4"
-                value={messageInput}
-                onChange={(e) => setMessageInput(e.target.value)}
-              />
+		{activeConv && (
+		<>
+			<textarea
+			className="w-full bg-[var(--bg-input)] border border-[var(--border)] rounded p-2 mt-4"
+			value={messageInput}
+			onChange={(e) => setMessageInput(e.target.value)}
+			/>
 
-              <button
-                onClick={sendMessage}
-                className="mt-2 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded"
-              >
-                Wyślij
-              </button>
-            </>
-          )}
-        </div>
-      </div>
+			<button
+			onClick={sendMessage}
+			className="mt-2 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded"
+			>
+			Wyślij
+			</button>
+		</>
+		)}
+	</div>
+	</div>
     );
   }
 
   // UI — LOGOWANY USER
   return (
-    <div className="flex h-screen bg-gray-900 text-gray-100">
-      {/* SIDEBAR */}
-      <div className="w-80 bg-gray-800 p-4 border-r border-gray-700 overflow-y-auto">
-        <button onClick={logout} className="w-full bg-red-600 p-2 rounded mb-3">
-          Wyloguj
-        </button>
+<div className="flex h-screen bg-[var(--bg)] text-[var(--text)]">
+  {/* SIDEBAR */}
+  <div className="w-80 p-4 border-r border-[var(--border)] bg-[var(--bg-panel)] overflow-y-auto">
+
+    <button
+      onClick={logout}
+      className="w-full p-2 rounded mb-3 bg-red-600 text-white hover:opacity-90"
+    >
+      Wyloguj
+    </button>
+
+    <button
+      onClick={createConversation}
+      className="w-full p-2 rounded bg-green-600 text-white hover:opacity-90"
+    >
+      Nowa rozmowa
+    </button>
+
+    {user?.role === "admin" && (
+      <button
+        onClick={() => setAdminOpen(prev => !prev)}
+        className="w-full p-2 rounded mt-3 bg-purple-600 text-white hover:opacity-90"
+      >
+        {adminOpen ? "Zamknij panel administratora" : "Panel administratora"}
+      </button>
+    )}
+
+    {/* HISTORIA */}
+    <ul className="mt-4 space-y-2">
+      {conversations.map(c => (
+        <li
+          key={c.id}
+          onClick={() => setActiveConv(c)}
+          className="flex justify-between items-center p-2 rounded cursor-pointer hover:bg-[var(--bg-hover)]"
+        >
+          {editingId === c.id ? (
+            <div className="flex items-center gap-2 w-full">
+              <input
+                autoFocus
+                value={editingTitle}
+                onChange={e => setEditingTitle(e.target.value)}
+                onKeyDown={e => {
+                  if (e.key === "Enter") saveTitle(c.id);
+                  if (e.key === "Escape") setEditingId(null);
+                }}
+                className="flex-1 p-1 rounded bg-[var(--bg-input)] border border-[var(--border)]"
+              />
+              <button onClick={() => saveTitle(c.id)}>✅</button>
+              <button onClick={() => setEditingId(null)}>❌</button>
+            </div>
+          ) : (
+            <span>{c.title}</span>
+          )}
+
+          <div className="flex gap-2">
+            <button
+              onClick={e => {
+                e.stopPropagation();
+                setEditingId(c.id);
+                setEditingTitle(c.title);
+              }}
+              className="text-yellow-400"
+            >
+              ✏️
+            </button>
+            <button
+              onClick={e => {
+                e.stopPropagation();
+                deleteConversation(c.id);
+              }}
+              className="text-red-400"
+            >
+              🗑
+            </button>
+          </div>
+        </li>
+      ))}
+    </ul>
+
+    {/* ADMIN PANEL */}
+    {adminOpen && (
+      <div className="mt-6 border-t border-[var(--border)] pt-4">
+        <h3 className="text-xl mb-3">Panel administratora</h3>
+
+        <input
+          placeholder="Email"
+          value={newUserEmail}
+          onChange={e => setNewUserEmail(e.target.value)}
+          className="w-full p-2 mb-2 rounded bg-[var(--bg-input)] border border-[var(--border)]"
+        />
+
+        <input
+          type="password"
+          placeholder="Hasło"
+          value={newUserPassword}
+          onChange={e => setNewUserPassword(e.target.value)}
+          className="w-full p-2 mb-2 rounded bg-[var(--bg-input)] border border-[var(--border)]"
+        />
+
+        <input
+          placeholder="Nazwa"
+          value={newUserName}
+          onChange={e => setNewUserName(e.target.value)}
+          className="w-full p-2 mb-3 rounded bg-[var(--bg-input)] border border-[var(--border)]"
+        />
+
+        <select
+          value={newUserRole}
+          onChange={e => setNewUserRole(e.target.value)}
+          className="w-full p-2 mb-3 rounded bg-[var(--bg-input)] border border-[var(--border)]"
+        >
+          <option value="user">User</option>
+          <option value="admin">Admin</option>
+        </select>
 
         <button
-          onClick={createConversation}
-          className="w-full bg-green-600 p-2 rounded"
+          onClick={createUser}
+          className="w-full p-2 rounded bg-green-600 text-white hover:opacity-90 mb-4"
         >
-          Nowa rozmowa
+          Dodaj użytkownika
         </button>
 
-        {user?.role === "admin" && (
-          <button
-            onClick={() => setAdminOpen((prev) => !prev)}
-            className="w-full bg-purple-600 p-2 rounded mt-3"
-          >
-            {adminOpen ? "Zamknij panel administratora" : "Panel administratora"}
-          </button>
-        )}
+        <ul className="space-y-2 max-h-64 overflow-y-auto">
+          {users.map(u => (
+            <li key={u.id} className="p-3 rounded bg-[var(--bg-hover)]">
+              <p className="font-medium break-all">{u.email}</p>
+              <p className="text-sm opacity-70">Rola: {u.role}</p>
 
-        {/* HISTORIA */}
-        <ul className="mt-4 space-y-2">
-          {conversations.map((c) => (
-            <li
-              key={c.id}
-              className="flex justify-between items-center p-2 rounded hover:bg-gray-700 cursor-pointer"
-              onClick={() => setActiveConv(c)}
-            >
-              {editingId === c.id ? (
-				  <div className="flex items-center space-x-2">
-					<input
-					  autoFocus
-					  value={editingTitle}
-					  onChange={(e) => setEditingTitle(e.target.value)}
-					  onKeyDown={(e) => {
-						if (e.key === "Enter") {
-						  saveTitle(c.id);
-						} else if (e.key === "Escape") {
-						  setEditingId(null);
-						}
-					  }}
-					  className="bg-gray-900 p-1 rounded border border-gray-700"
-					/>
-
-					<button
-					  onClick={(e) => {
-						e.stopPropagation();
-						saveTitle(c.id);
-					  }}
-					  className="text-green-400"
-					  title="Zapisz"
-					>
-					  ✅
-					</button>
-
-					<button
-					  onClick={(e) => {
-						e.stopPropagation();
-						setEditingId(null);
-					  }}
-					  className="text-gray-400"
-					  title="Anuluj"
-					>
-					  ❌
-					</button>
-				  </div>
-				) : (
-				  <span>{c.title}</span>
-				)}
-
-              <div className="flex space-x-2">
-                <button
-                  className="text-yellow-400"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    setEditingId(c.id);
-                    setEditingTitle(c.title);
-                  }}
-                >
-                  ✏️
-                </button>
-
-                <button
-                  className="text-red-400"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    deleteConversation(c.id);
-                  }}
-                >
-                  🗑
-                </button>
+              <div className="flex gap-2 mt-2 flex-wrap">
+                <button onClick={() => resetPassword(u.id)}>Reset hasła</button>
+                <button onClick={() => deleteUser(u.id)}>Usuń</button>
+                <button onClick={() => changeRole(u.id)}>Zmień rolę</button>
               </div>
             </li>
           ))}
         </ul>
-
-        {/* ADMIN PANEL */}
-        {adminOpen && (
-          <div className="mt-6 border-t border-gray-600 pt-4">
-            <h3 className="text-xl mb-3">Panel administratora</h3>
-
-            <input
-              placeholder="Email"
-              value={newUserEmail}
-              onChange={(e) => setNewUserEmail(e.target.value)}
-              className="w-full p-2 mb-2 bg-gray-900 border border-gray-700 rounded"
-            />
-
-            <input
-              placeholder="Hasło"
-              type="password"
-              value={newUserPassword}
-              onChange={(e) => setNewUserPassword(e.target.value)}
-              className="w-full p-2 mb-2 bg-gray-900 border border-gray-700 rounded"
-            />
-
-            <input
-              placeholder="Nazwa"
-              value={newUserName}
-              onChange={(e) => setNewUserName(e.target.value)}
-              className="w-full p-2 mb-3 bg-gray-900 border border-gray-700 rounded"
-            />
-
-            <select
-              value={newUserRole}
-              onChange={(e) => setNewUserRole(e.target.value)}
-              className="w-full p-2 mb-3 bg-gray-900 border border-gray-700 rounded"
-            >
-              <option value="user">User</option>
-              <option value="admin">Admin</option>
-            </select>
-
-            <button
-              onClick={createUser}
-              className="w-full bg-green-600 p-2 rounded mb-4"
-            >
-              Dodaj użytkownika
-            </button>
-
-            <h4 className="text-lg mb-2">Użytkownicy</h4>
-
-            <ul className="space-y-2 max-h-64 overflow-y-auto">
-              {users.map((u) => (
-				<li
-				  key={u.id}
-				  className="bg-gray-700 p-3 rounded"
-				>
-				  <div className="mb-2">
-					<p className="text-white font-medium break-all">{u.email}</p>
-					<p className="text-sm text-gray-300">Rola: {u.role}</p>
-				  </div>
-
-				  <div className="flex flex-wrap gap-2">
-					<button
-					  onClick={() => resetPassword(u.id)}
-					  className="px-1 py-1 border border-yellow-500 text-white rounded text-sm hover:bg-yellow-500 hover:text-black transition"
-					>
-					  Reset hasła
-					</button>
-
-					<button
-					  onClick={() => deleteUser(u.id)}
-					  className="px-1 py-1 border border-red-500 text-white rounded text-sm hover:bg-red-500 hover:text-black transition"
-					>
-					  Usuń
-					</button>
-
-					<button
-					  onClick={() => changeRole(u.id)}
-					  className="px-1 py-1 border border-blue-500 text-white rounded text-sm hover:bg-blue-500 hover:text-black transition"
-					>
-					  Zmień rolę
-					</button>
-				  </div>
-				</li>
-              ))}
-            </ul>
-          </div>
-        )}
       </div>
+    )}
+  </div>
 
-      {/* PANEL WIADOMOŚCI */}
-      <div className="flex-1 p-6">
-        <h2 className="text-xl font-semibold">
-          {activeConv?.title || "Wybierz rozmowę"}
-        </h2>
-		<button
-		  onClick={() => setRightPanelOpen(prev => !prev)}
-		  className="absolute top-4 right-6 bg-gray-700 px-3 py-1 rounded hover:bg-gray-600"
-		>
-		  ☰
-		</button>
+  {/* PANEL WIADOMOŚCI */}
+  <div className="flex-1 p-6 relative">
+    <h2 className="text-xl font-semibold">
+      {activeConv?.title || "Wybierz rozmowę"}
+    </h2>
 
-        <div
-          className="border border-gray-700 rounded p-4 mt-4 bg-gray-800 overflow-y-auto"
-          style={{ height: "70vh" }}
-        >
-          {activeConv?.messages?.map((m) => (
-            <div key={m.id} className="mb-4">
-              <strong className={m.sender === "user" ? "text-blue-400" : "text-green-400"}>
-                {m.sender === "user" ? "Ty" : "Asystent"}:
-              </strong>
-              <p>{m.content}</p>
-            </div>
-          ))}
+    <button
+      onClick={() => setRightPanelOpen(prev => !prev)}
+      className="absolute top-4 right-6 px-3 py-1 rounded bg-[var(--bg-panel)] border border-[var(--border)]"
+    >
+      ☰
+    </button>
+
+    <div
+      className="mt-4 p-4 rounded border border-[var(--border)] bg-[var(--bg-panel)] overflow-y-auto"
+      style={{ height: "70vh" }}
+    >
+      {activeConv?.messages?.map(m => (
+        <div key={m.id} className="mb-4">
+          <strong className={m.sender === "user" ? "text-blue-400" : "text-green-400"}>
+            {m.sender === "user" ? "Ty" : "Asystent"}:
+          </strong>
+          <p>{m.content}</p>
         </div>
-
-        {activeConv && (
-          <>
-            <textarea
-              value={messageInput}
-              onChange={(e) => setMessageInput(e.target.value)}
-              className="w-full bg-gray-800 border border-gray-700 rounded p-2 mt-4"
-            />
-
-            <button
-              onClick={sendMessage}
-              className="mt-2 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded"
-            >
-              Wyślij
-            </button>
-          </>
-        )}
-      </div>
-	  
-	  	{/* RIGHT SIDEBAR — PROFIL + USTAWIENIA */}
-		<div
-		  className={`
-			fixed top-0 right-0 h-full bg-gray-800 border-l border-gray-700
-			transition-transform duration-300
-			w-56 p-4 overflow-y-auto
-			${rightPanelOpen ? "translate-x-0" : "translate-x-full"}
-		  `}
-		>
-		<button
-		  onClick={() => setRightPanelOpen(false)}
-		  className="absolute top-3 right-3 text-gray-300 hover:text-white text-xl"
-		>
-		  ✕
-		</button>
-		  <h3 className="text-xl mb-4">Twój profil</h3>
-
-		  <div className="space-y-2">
-			<p><span className="text-gray-400">Email:</span> {user?.email}</p>
-			<p><span className="text-gray-400">Rola:</span> {user?.role}</p>
-		  </div>
-
-		  <button
-			onClick={goToProfile}
-			className="w-full mt-4 bg-blue-600 p-2 rounded hover:bg-blue-700"
-		  >
-			Edytuj profil
-		  </button>
-
-		  <h3 className="text-xl mt-6 mb-4">Ustawienia</h3>
-
-		  <ul className="space-y-2">
-			<li className="hover:text-blue-400 cursor-pointer">Motyw aplikacji</li>
-			<li className="hover:text-blue-400 cursor-pointer">Zmień hasło</li>
-			<li className="hover:text-blue-400 cursor-pointer">Powiadomienia</li>
-		  </ul>
-		</div>
+      ))}
     </div>
+
+    {activeConv && (
+      <>
+        <textarea
+          value={messageInput}
+          onChange={e => setMessageInput(e.target.value)}
+          className="w-full mt-4 p-2 rounded bg-[var(--bg-input)] border border-[var(--border)]"
+        />
+        <button
+          onClick={sendMessage}
+          className="mt-2 px-4 py-2 rounded bg-blue-600 text-white hover:opacity-90"
+        >
+          Wyślij
+        </button>
+      </>
+    )}
+  </div>
+
+  {/* RIGHT SIDEBAR */}
+  <div
+    className={`fixed top-0 right-0 h-full w-56 p-4 bg-[var(--bg-panel)] border-l border-[var(--border)] transition-transform duration-300 ${
+      rightPanelOpen ? "translate-x-0" : "translate-x-full"
+    }`}
+  >
+    <button
+      onClick={() => setRightPanelOpen(false)}
+      className="absolute top-3 right-3 text-xl"
+    >
+      ✕
+    </button>
+
+    <h3 className="text-xl mb-4">Twój profil</h3>
+
+    <p>Email: {user?.email}</p>
+    <p>Rola: {user?.role}</p>
+
+    <button
+      onClick={goToProfile}
+      className="w-full mt-4 p-2 rounded bg-blue-600 text-white"
+    >
+      Edytuj profil
+    </button>
+
+    <h3 className="text-xl mt-6 mb-4">Ustawienia</h3>
+
+    <ul className="space-y-2">
+      <li className="cursor-pointer" onClick={toggleTheme}>
+        Motyw aplikacji: {theme === "dark" ? "🌙" : "☀️"}
+      </li>
+      <li className="cursor-pointer" onClick={goToChangePassword}>
+        Zmień hasło
+      </li>
+    </ul>
+  </div>
+</div>
+
 	
   );
 }
@@ -666,8 +643,9 @@ export default function AppWrapper() {
   return (
     <Routes>
       <Route path="/" element={<App />} />
-      {/* Profil użytkownika */}
       <Route path="/profile" element={<ProfilePage />} />
+	  <Route path="/change-password" element={<ChangePasswordPage />} />
     </Routes>
   );
 }
+

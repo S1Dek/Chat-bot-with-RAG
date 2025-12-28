@@ -86,6 +86,7 @@ router.get("/me", async (req, res) => {
   }
 });
 
+
 router.patch("/update", verifyToken, async (req, res) => {
   try {
     const { email, name, password } = req.body;
@@ -119,5 +120,36 @@ router.patch("/update", verifyToken, async (req, res) => {
     return res.status(400).json({ error: "Nie udało się zaktualizować danych" });
   }
 });
+
+router.patch("/change-password", verifyToken, async (req, res) => {
+  const { currentPassword, newPassword } = req.body;
+
+  if (!currentPassword || !newPassword) {
+    return res.status(400).json({ error: "Brak danych" });
+  }
+
+  const user = await prisma.user.findUnique({
+    where: { id: req.userId },
+  });
+
+  if (!user) {
+    return res.status(404).json({ error: "Użytkownik nie istnieje" });
+  }
+
+  const ok = await bcrypt.compare(currentPassword, user.password);
+  if (!ok) {
+    return res.status(400).json({ error: "Nieprawidłowe aktualne hasło" });
+  }
+
+  const hashed = await bcrypt.hash(newPassword, 10);
+
+  await prisma.user.update({
+    where: { id: req.userId },
+    data: { password: hashed },
+  });
+
+  res.json({ success: true });
+});
+
 
 module.exports = router;
