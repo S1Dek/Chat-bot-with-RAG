@@ -10,6 +10,7 @@ WORKDIR /Chat-bot-with-RAG-webclient/backend
 COPY backend/package*.json ./
 RUN npm install
 COPY backend/ .
+RUN npx prisma generate --schema=./prisma/schema.prisma
 
 FROM node:22
 WORKDIR /Chat-bot-with-RAG-webclient
@@ -20,9 +21,7 @@ COPY --from=frontend-build /Chat-bot-with-RAG-webclient/frontend/build ./backend
 
 WORKDIR /Chat-bot-with-RAG-webclient/backend
 
-# ustaw zmienną NODE_ENV
 ENV NODE_ENV=production
-
 EXPOSE 8080
 
 CMD ["npm", "start"]
