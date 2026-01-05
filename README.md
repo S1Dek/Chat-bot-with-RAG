@@ -36,16 +36,16 @@ Projekt składa się z **frontendu (React)** oraz **backendu (Node.js + Express 
 
 ---
 
-## Technologie
+### Technologie
 
-### Frontend
+#### Frontend
 - React 19
 - Axios
 - React Router v6
 - TailwindCSS
 - CSS Variables (obsługa motywów)
 
-### Backend
+#### Backend
 - Node.js
 - Express
 - Prisma ORM
@@ -65,7 +65,7 @@ git clone https://github.com/S1Dek/Chat-bot-with-RAG
 cd chatbot-front-projc
 ```
 
-# Backend
+#### Backend
 ```bash
 cd backend
 npm install
@@ -83,8 +83,7 @@ npm run dev
 Backend uruchomi się pod adresem:
 http://localhost:8080
 
----
-# Frontend
+#### Frontend
 ```bash
 cd frontend
 npm install
@@ -107,7 +106,7 @@ GET /api/auth/me
 PATCH /api/auth/update
 PATCH /api/auth/change-password
 
-# Funkcjonalności czatu
+## Funkcjonalności czatu
 Endpointy
 
 POST /api/messages/send
@@ -117,7 +116,7 @@ PATCH /api/conversations/:id
 DELETE /api/conversations/:id
 
 ---
-# Panel administratora
+## Panel administratora
 
 Panel dostępny wyłącznie dla użytkowników z rolą admin.
 
@@ -127,7 +126,15 @@ Funkcje
 - resetowanie haseł
 - zmiana ról użytkowników
 
-# Motywy aplikacji
+## Profil użytkownika
+- Edycja profilu
+- zmiana imienia
+- zmiana adresu email
+- Zmiana hasła
+- wymaga podania aktualnego hasła
+- zabezpieczona przez JWT
+
+## Motywy aplikacji
 
 Aplikacja obsługuje:
 -🌙 tryb ciemny/☀️ tryb jasny aplikacji
@@ -136,17 +143,8 @@ Implementacja
 - CSS Variables w index.css
 - przełączanie klasy na elemencie <body>
 - document.body.classList.toggle("dark")
-
-# Profil użytkownika
-- Edycja profilu
-- zmiana imienia
-- zmiana adresu email
-- Zmiana hasła
-- wymaga podania aktualnego hasła
-- zabezpieczona przez JWT
-
 ---
-# Użytkownicy testowi
+## Użytkownicy testowi
 Email testowego administratora:
 admin@mail.com
 
@@ -163,7 +161,7 @@ Hasło:
 	zaq1@WSX
 ```
 ---
-# Najczęstsze problemy
+## Najczęstsze problemy
 
 ❌ Brak react-router-dom
 ```bash
