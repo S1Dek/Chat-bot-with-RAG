@@ -1,49 +1,52 @@
-<h1>Chatbot with RAG and LangChain</h1>
+<h1>Chatbot z RAG i LangChain</h1>
 
+### Opis aplikacji
 
-<h2>Prerequisites</h2>
+Aplikacja została napisana w języku Python i jej głównym celem jest analiza instrukcji producentów urządzeń elektronicznych zapisanych w plikach PDF. System wczytuje dokumenty, przetwarza ich treść i wykorzystuje podejście RAG (Retrieval-Augmented Generation) do generowania odpowiedzi na zapytania użytkownika.
+
+Uzyskane odpowiedzi są wykorzystywane jako dane treningowe do dalszego uczenia modelu językowego. Dzięki zastosowaniu RAG model nie bazuje wyłącznie na wiedzy wstępnej, ale dynamicznie pobiera istotne fragmenty dokumentacji, co pozwala na precyzyjne i kontekstowe odpowiedzi zgodne z instrukcjami producenta.
+
+Projekt wykorzystuje bibliotekę LangChain do zarządzania przepływem danych, wektorami oraz integracją z modelem językowym OpenAI.
+
+<h2>Wymagania wstępne</h2>
 <ul>
   <li>Python 3.11+</li>
 </ul>
 
-<h2>Installation</h2>
-<h3>1. Clone the repository:</h3>
+<h2>Instalacja</h2>
+<h3>1. Sklonuj repozytorium:</h3>
 
-```
-git clone https://github.com/ThomasJanssen-tech/Chatbot-with-RAG-and-LangChain.git
-cd Chatbot-with-RAG-and-LangChain
-```
-
-<h3>2. Create a virtual environment</h3>
+<h3>2. Utwórz środowisko wirtualne</h3>
 
 ```
 python -m venv venv
 ```
 
-<h3>3. Activate the virtual environment</h3>
+<h3>3. Aktywuj środowisko wirtualne</h3>
 
 ```
 venv\Scripts\Activate
-(or on Mac): source venv/bin/activate
 ```
 
-<h3>4. Install libraries</h3>
+<h3>4. Zainstaluj wymagane biblioteki</h3>
 
 ```
 pip install -r requirements.txt
 ```
 
-<h3>5. Add OpenAI API Key</h3>
-Rename the .env.example file to .env
-Add your OpenAI API Key
+5. Dodaj klucz API OpenAI
+Zmień nazwę pliku .env.example na .env
+Wklej swój klucz API OpenAI do pliku .env
 
-<h2>Executing the scripts</h2>
+<h2>Uruchamianie skryptów</h2>
 
-- Open a terminal in VS Code
-
-- Execute the following command:
+- Otwórz terminal w Visual Studio Code
+- Wykonaj następujące polecenia:
 
 ```
 python ingest_database.py
 python chatbot.py
 ```
+
+ingest_database.py – odpowiada za wczytanie i przetworzenie danych z plików PDF oraz zapis ich w bazie wektorowej
+chatbot.py – uruchamia chatbota, który odpowiada na zapytania na podstawie dokumentacji i mechanizmu RAG
