@@ -50,7 +50,7 @@ router.post("/login", async (req, res) => {
   if (!ok) return res.status(401).json({ error: "Nieprawidłowe dane" });
 
   const token = jwt.sign({ userId: user.id, role: user.role }, JWT_SECRET, {
-    expiresIn: "12h",
+    expiresIn: "365d",
   });
 
   await prisma.session.create({

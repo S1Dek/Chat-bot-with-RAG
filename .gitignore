@@ -2,4 +2,10 @@ node_modules
 # Keep environment variables out of version control
 .env
 
+/backend/tests
+/node_modules
 /generated/prisma
+cypress.config.js
+/cypress
+package-lock.json
+package.json

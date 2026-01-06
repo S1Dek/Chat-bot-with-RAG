@@ -12,6 +12,7 @@
         "prisma": "^6.19.0"
     },
     "scripts": {
+        "test": "jest",
         "start": "node src/app.js",
         "dev": "nodemon src/app.js",
         "prisma:migrate": "prisma migrate dev --name init"
