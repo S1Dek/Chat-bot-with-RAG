@@ -181,7 +181,7 @@ function App() {
 	  try {
 		// TRYB GOŚCIA
 		if (!authToken) {
-		  const res = await axios.post("/api/messages/send", {
+		  const res = await axios.post("/api/messages/guest", {
 			content: textToSend,
 			guest: true,
 		  });
