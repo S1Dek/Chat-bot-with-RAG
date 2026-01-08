@@ -59,7 +59,7 @@ Bez uruchomionej instancji modelu aplikacja nie będzie w stanie generować odpo
 Poniżej znajdziesz instrukcje krok po kroku.
 
 Jeśli zostały spełnione wymagania środowiskowe, należy:
-###Backend
+### Backend
 Przejdź do folderu backend:
 ```bash
 cd backend
@@ -76,8 +76,8 @@ Uruchom serwer w trybie developerskim:
 ```bash
 npm run dev
 ```
-
 Backend powinien uruchomić się na domyślnym porcie (np. http://localhost:3000). 
+
 ---
 ### Frontend
 Otwórz folder frontend:
