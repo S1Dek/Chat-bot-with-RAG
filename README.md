@@ -1,12 +1,11 @@
 # chatbot aplikacja internetowa
 ## Opis projektu
-Chat-bot-with-RAG to pełnostackowa aplikacja webowa umożliwiająca interakcję z eksperckim chatbotem na bazie techniki Retrieval-Augmented Generation (RAG). Backend w Node.js udostępnia API do obsługi konwersacji i uwierzytelniania, natomiast frontend w React zapewnia nowoczesny interfejs użytkownika do prowadzenia rozmów w czasie rzeczywistym. System wykorzystuje integrację z zewnętrznymi modelami językowymi oraz mechanizmy przechowywania i wyszukiwania semantycznego kontekstu wiadomości w bazie danych, co pozwala na generowanie odpowiedzi opartych na treści zebranej w czasie rozmowy.
+Chat-bot-with-RAG to pełnostackowa aplikacja webowa umożliwiająca interakcję z eksperckim chatbotem, uczonym na bazie techniki finetuningu wraz z Retrieval-Augmented Generation (RAG). Backend w Node.js udostępnia API do obsługi konwersacji i uwierzytelniania, natomiast frontend w React zapewnia nowoczesny interfejs użytkownika do prowadzenia rozmów w czasie rzeczywistym. System wykorzystuje integrację z zewnętrznymi modelami językowymi oraz mechanizmy przechowywania i wyszukiwania semantycznego kontekstu wiadomości w bazie danych, co pozwala na generowanie odpowiedzi opartych na treści zebranej w czasie rozmowy.
 
 ## Funkcjonalności
 - Logowanie i autoryzacja użytkowników
 - Tworzenie i zarządzanie konwersacjami
 - Wysyłanie, zapisywanie i pobieranie wiadomości
-- RAG-owe generowanie odpowiedzi ze wsparciem zewnętrznych modeli
 - Panel administracyjny do zarządzania danymi
 - Interaktywny frontend umożliwiający prowadzenie sesji czatu
 - Osobne moduły backend i frontend dla lepszej architektury
