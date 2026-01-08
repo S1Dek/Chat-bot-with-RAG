@@ -23,10 +23,43 @@ Chat-bot-with-RAG to pełnostackowa aplikacja webowa umożliwiająca interakcję
 - Komponenty funkcyjne
 - CSS modularny
 ---
+Wymagania środowiskowe
+
+Przed uruchomieniem aplikacji lokalnie należy posiadać:
+
+- Node.js (zalecana wersja LTS)
+- npm lub yarn
+- PostgreSQL
+- Ollama (zainstalowana lokalnie)
+
+System operacyjny: Windows / Linux / macOS
+
+##Konfiguracja bazy danych (PostgreSQL)
+
+- Upewnij się, że serwer PostgreSQL jest uruchomiony.
+- Utwórz nową bazę danych (nazwa: chatbot-MRLS-db).
+
+Zaimportuj strukturę i dane z pliku backup.sql, który znajduje się w repozytorium:
+```bash
+psql -U <nazwa_użytkownika> -d <nazwa_bazy> -f backup.sql
+```
+Uzupełnij dane dostępowe do bazy w pliku .env w folderze backend.
+
+##Konfiguracja modelu językowego (Ollama)
+Aby odpowiedzi modelu językowego działały w pełni poprawnie:
+- Zainstaluj Ollama zgodnie z instrukcjami dla swojego systemu operacyjnego.
+- Utwórz instancję modelu na podstawie przygotowanego Modelfile.
+- Uruchom model lokalnie za pomocą Ollama.
+- Upewnij się, że backend aplikacji ma skonfigurowany adres endpointu Ollama (np. http://localhost:11434).
+
+Bez uruchomionej instancji modelu aplikacja nie będzie w stanie generować odpowiedzi AI.
+---
 ## Jak uruchomić projekt lokalnie
 
 Poniżej znajdziesz instrukcje krok po kroku.
-### Backend
+
+Jeśli zostały spełnione wymagania środowiskowe, należy:
+###Backend
 Przejdź do folderu backend:
 ```bash
 cd backend
@@ -37,15 +70,14 @@ Zainstaluj zależności:
 npm install
 ```
 
-Utwórz plik .env bazując na .env.example i dodaj swoje zmienne środowiskowe (np. klucz JWT, dane bazy).
+Jeśli brakuje pliku .env, utwórz plik o tej nazwie w katalogu backend i dodaj swoje zmienne środowiskowe
 
 Uruchom serwer w trybie developerskim:
 ```bash
 npm run dev
 ```
 
-Backend powinien uruchomić się na domyślnym porcie (np. http://localhost:3000
-). 
+Backend powinien uruchomić się na domyślnym porcie (np. http://localhost:3000). 
 ---
 ### Frontend
 Otwórz folder frontend:
