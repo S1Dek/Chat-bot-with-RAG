@@ -21,8 +21,9 @@ Chat-bot-with-RAG to pełnostackowa aplikacja webowa umożliwiająca interakcję
 - React
 - Komponenty funkcyjne
 - CSS modularny
+  
 ---
-Wymagania środowiskowe
+## Wymagania środowiskowe
 
 Przed uruchomieniem aplikacji lokalnie należy posiadać:
 
@@ -33,7 +34,7 @@ Przed uruchomieniem aplikacji lokalnie należy posiadać:
 
 System operacyjny: Windows / Linux / macOS
 
-##Konfiguracja bazy danych (PostgreSQL)
+## Konfiguracja bazy danych (PostgreSQL)
 
 - Upewnij się, że serwer PostgreSQL jest uruchomiony.
 - Utwórz nową bazę danych (nazwa: chatbot-MRLS-db).
@@ -52,6 +53,7 @@ Aby odpowiedzi modelu językowego działały w pełni poprawnie:
 - Upewnij się, że backend aplikacji ma skonfigurowany adres endpointu Ollama (np. http://localhost:11434).
 
 Bez uruchomionej instancji modelu aplikacja nie będzie w stanie generować odpowiedzi AI.
+
 ---
 ## Jak uruchomić projekt lokalnie
 
