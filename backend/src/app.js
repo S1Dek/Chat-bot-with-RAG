@@ -16,7 +16,7 @@ app.use(bodyParser.json());
 
 app.use("/api/auth", authRoutes);
 app.use("/api/conversations", verifyToken, convRoutes);
-app.use("/api/messages", verifyToken, messageRoutes);
+app.use("/api/messages", messageRoutes);
 app.use("/api/admin", verifyToken, adminRoutes);
 
 const PORT = process.env.PORT || 8080;
