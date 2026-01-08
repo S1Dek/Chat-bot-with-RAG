@@ -76,7 +76,7 @@ Uruchom serwer w trybie developerskim:
 ```bash
 npm run dev
 ```
-Backend powinien uruchomić się na domyślnym porcie (np. http://localhost:3000). 
+Backend powinien uruchomić się na domyślnym porcie (np. http://localhost:8080). 
 
 ---
 ### Frontend
