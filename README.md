@@ -12,13 +12,13 @@ Chat-bot-with-RAG to pełnostackowa aplikacja webowa umożliwiająca interakcję
 - Osobne moduły backend i frontend dla lepszej architektury
 ---
 ## Technologia
-###Backend
+### Backend
 - Node.js + Express
 - Prisma ORM do komunikacji z bazą danych
 - JWT do uwierzytelniania
 - Struktura API zgodna z REST
 
-###Frontend
+### Frontend
 - React
 - Komponenty funkcyjne
 - CSS modularny
